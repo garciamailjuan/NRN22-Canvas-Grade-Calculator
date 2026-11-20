@@ -49,7 +49,7 @@ section .desc{color:var(--muted);font-size:.97rem;margin:8px 0 16px}
 .subtotal{display:flex;justify-content:space-between;gap:12px;padding:12px 2px 0;font-weight:700;border-top:1px solid var(--line);margin-top:14px}
 
 /* Buttons */
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 18px}
 .button{border:0;border-radius:9px;padding:11px 18px;font-size:1rem;font-weight:700;cursor:pointer;background:var(--phthalo);color:#fff;transition:background .15s ease}
 .button:hover{background:var(--phthalo2)}
 .button.outline{background:#fff;color:var(--phthalo);border:1px solid var(--phthalo)}
@@ -72,6 +72,12 @@ section .desc{color:var(--muted);font-size:.97rem;margin:8px 0 16px}
 <body>
 <div class="wrap">
 <header class="hero"><h1>NRN-22 Course Grade Calculator</h1><p>Enter your scores to estimate your weighted course grade.</p><div class="weights"><span>Exams 65%</span><span>Final Exam 20%</span><span>ATI 10%</span><span>Seminar Portfolio 5%</span><span class="pass">Passing: 75%</span></div></header>
+<div class="actions">
+ <button class="button" id="fillAll" type="button" title="Enters the maximum points in every field, replacing existing entries">Fill All Scores</button>
+ <button class="button outline" id="fillRemaining" type="button" title="Fills only blank fields and keeps scores already entered">Assume Full Points on Remaining Assignments</button>
+ <button class="button secondary" id="reset" type="button" title="Resets all fields">Clear All Scores</button>
+ <button class="button secondary" id="print" type="button">Print / Save as PDF</button>
+</div>
 <div class="progress-card" aria-live="polite"><div class="progress-head"><span>Course grade accounted for</span><span id="progressPercent">0%</span></div><div class="progress-track" role="progressbar" aria-label="Course grade accounted for" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressTrack"><div class="progress-fill" id="progressFill"></div></div><div class="progress-caption" id="progressCaption">Enter scores to track how much of the course grade is represented.</div></div>
 <div class="results" aria-live="polite">
  <div class="result overall" id="overallBox"><div class="label">Projected overall grade (blank = 0)</div><div class="value" id="overall">0.00%</div></div>
@@ -81,12 +87,6 @@ section .desc{color:var(--muted);font-size:.97rem;margin:8px 0 16px}
 <section><h2>Final Exam — 20%</h2><p class="desc">75 points total. Weighted final points = earned points ÷ 75 × 20.</p><div class="grid" id="final"></div><div class="subtotal"><span>Final exam</span><span id="finalTotal">0 / 75 · 0.00 weighted points</span></div></section>
 <section><h2>Seminar Portfolio — 5%</h2><p class="desc">475 total points. Weighted portfolio points = earned points ÷ 475 × 5.</p><div class="grid" id="portfolio"></div><div class="subtotal"><span>Portfolio total</span><span id="portfolioTotal">0 / 475 · 0.00 weighted points</span></div></section>
 <section><h2>ATI Standardized Testing — 10%</h2><p class="desc">40 total ATI points. Weighted ATI points = earned ATI points ÷ 40 × 10.</p><div id="ati"></div><div class="subtotal"><span>ATI total</span><span id="atiTotal">0 / 40 · 0.00 weighted points</span></div></section>
-<div class="actions">
- <button class="button" id="fillAll" type="button" title="Enters the maximum points in every field, replacing existing entries">Fill All Scores</button>
- <button class="button outline" id="fillRemaining" type="button" title="Fills only blank fields and keeps scores already entered">Assume Full Points on Remaining Assignments</button>
- <button class="button secondary" id="reset" type="button" title="Resets all fields">Clear All Scores</button>
- <button class="button secondary" id="print" type="button">Print / Save as PDF</button>
-</div>
 <p class="note"><strong>Fill All Scores</strong> enters the maximum points in every field, replacing existing entries. <strong>Assume Full Points on Remaining Assignments</strong> fills only blank fields and keeps scores already entered. <strong>Clear All Scores</strong> resets all fields.</p>
 <p class="note">This calculator is an estimate for planning purposes. Verify all scores and course grading policies with your instructor. Scores above an assessment's maximum are not counted.</p>
 </div>
