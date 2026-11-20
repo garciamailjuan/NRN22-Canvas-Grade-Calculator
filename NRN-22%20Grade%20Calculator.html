@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NRN-22 Grade Calculator</title>
+<style>
+:root{--ink:#1f3447;--blue:#dcecf7;--blue2:#edf5fa;--green:#e4f2e8;--gold:#fff3d6;--line:#cbd8e2;--accent:#245b83;--muted:#526678}
+*{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;margin:0;padding:20px;background:#f6f9fb;color:var(--ink);line-height:1.45}
+.wrap{max-width:1050px;margin:auto}.hero{background:var(--blue);border-radius:14px;padding:22px;margin-bottom:16px}.hero h1{margin:0 0 8px;font-size:1.55rem}.hero p{margin:0;color:#29475f}
+.results{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:14px 0}.result{padding:16px;background:white;border:1px solid var(--line);border-radius:12px}.result .label{font-size:.9rem;color:var(--muted)}.result .value{font-size:1.8rem;font-weight:700;margin-top:5px}.result.pass{background:var(--green)}.result.near{background:var(--gold)}
+section{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}section h2{margin:0 0 6px;font-size:1.2rem}section .desc{color:var(--muted);font-size:.92rem;margin:0 0 12px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.field{display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--blue2);padding:10px;border-radius:8px}.field label{font-size:.94rem}.field small{color:var(--muted);display:block}.field input{width:100px;padding:8px;border:1px solid #9db3c4;border-radius:7px;font-size:1rem;text-align:right;background:#fff;color:var(--ink)}
+.subtotal{display:flex;justify-content:space-between;padding:10px 2px 0;font-weight:700;border-top:1px solid var(--line);margin-top:10px}.actions{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}.button{border:0;border-radius:8px;padding:10px 15px;font-weight:700;cursor:pointer;background:var(--accent);color:white}.button.secondary{background:#e8eef2;color:var(--ink)}.note{font-size:.88rem;color:var(--muted)}
+@media(max-width:650px){body{padding:12px}.results{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.field input{width:90px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="hero"><h1>NRN-22 Course Grade Calculator</h1><p>Enter your scores to estimate your weighted course grade. Leave scores blank if you have not completed that assessment yet.</p></header>
+<div class="results" aria-live="polite">
+ <div class="result" id="overallBox"><div class="label">Projected overall grade (blank = 0)</div><div class="value" id="overall">0.00%</div></div>
+ <div class="result"><div class="label">Weighted points earned</div><div class="value" id="weighted">0.00 / 100</div></div>
+ <div class="result" id="statusBox"><div class="label">Passing status (75% required)</div><div class="value" id="status">Enter scores</div></div>
+</div>
+<section><h2>Exams — 65%</h2><p class="desc">Five exams, 75 points each (375 total). Weighted exam points = earned exam points ÷ 375 × 65.</p><div class="grid" id="exams"></div><div class="subtotal"><span>Exam total</span><span id="examTotal">0 / 375 · 0.00 weighted points</span></div></section>
+<section><h2>Final Exam — 20%</h2><p class="desc">75 points total. Weighted final points = earned points ÷ 75 × 20.</p><div class="grid" id="final"></div><div class="subtotal"><span>Final exam</span><span id="finalTotal">0 / 75 · 0.00 weighted points</span></div></section>
+<section><h2>Seminar Portfolio — 5%</h2><p class="desc">475 total points. Weighted portfolio points = earned points ÷ 475 × 5.</p><div class="grid" id="portfolio"></div><div class="subtotal"><span>Portfolio total</span><span id="portfolioTotal">0 / 475 · 0.00 weighted points</span></div></section>
+<section><h2>ATI Standardized Testing — 10%</h2><p class="desc">40 total ATI points. Weighted ATI points = earned ATI points ÷ 40 × 10.</p><div id="ati"></div><div class="subtotal"><span>ATI total</span><span id="atiTotal">0 / 40 · 0.00 weighted points</span></div></section>
+<div class="actions"><button class="button secondary" id="reset" type="button">Clear all scores</button><button class="button" id="print" type="button">Print / Save as PDF</button></div>
+<p class="note">This calculator is an estimate for planning purposes. Verify all scores and course grading policies with your instructor. Scores above an assessment's maximum are not counted.</p>
+</div>
+<script>
+const examItems=[['Exam 1',75],['Exam 2',75],['Exam 3',75],['Exam 4',75],['Exam 5',75]];
+const portfolioItems=[['Acute Coronary Syndrome / Interventional Cardiology',10],['Acute Decompensated Heart Failure / Heart Surgery',10],['Burns',10],['Congenital Heart Disorders',10],['Dysrhythmias Part I',10],['Dysrhythmias Part II',10],['Endocrine',10],['Endocrine-Thyroid / Transition to Practice',10],['Hemodynamics',10],['High Risk Neonate',10],['High Risk OB',10],['Intracranial Disorders 1',10],['Intracranial Disorders 2',10],['Peds Acute Infectious Diseases / Immune / HIV',10],['Peds GI / Fluid & Electrolytes',10],['Peds GU / Endocrine',10],['Peds Hematology / Oncology',10],['Peds Musculoskeletal / Trauma',10],['Peds Respiratory',10],['Respiratory Failure / Mechanical Vent / ARDS',10],['Shock / Sepsis',10],['Spinal Cord Injuries / Rehab / ICU Delirium',10],['Structural / Infectious Inflammatory Heart Disorders',10],['Geriatric Project',25],['Davita Dialysis Geriatric Assignment',20],['Pediatric Grand Rounds',100],['Cultural Competence Assignment',100]];
+const atiItems=[['ATI Med Surg Proctored — Practice with Remediation Score',4],['ATI Med Surg Proctored — Proctored Level Score',3],['ATI Med Surg Proctored — Proctored Remediation',3],['ATI Peds Proctored — Practice with Remediation Score',4],['ATI Peds Proctored — Proctored Level Score',3],['ATI Peds Proctored — Proctored Remediation',3],['Pharm Proctored — Practice with Remediation Score',4],['Pharm Proctored — Proctored Level Score',3],['Pharm Proctored — Proctored Remediation',3],['Comprehensive Predictor — Practice with Remediation Score',4],['Comprehensive Predictor — Proctored Level Score',6]];
+function build(containerId,items,prefix){const c=document.getElementById(containerId);items.forEach((it,i)=>{const [label,max]=it;const id=prefix+i;const div=document.createElement('div');div.className='field';div.innerHTML=`<label for="${id}">${label}<small>Max: ${max} point${max===1?'':'s'}</small></label><input id="${id}" type="number" min="0" max="${max}" step="0.01" inputmode="decimal" placeholder="—" aria-label="${label}, max ${max}">`;c.appendChild(div);});}
+build('exams',examItems,'e');build('final',[['Final Exam',75]],'f');build('portfolio',portfolioItems,'p');
+const atiGroups=[['ATI Med Surg Proctored',atiItems.slice(0,3)],['ATI Peds Proctored',atiItems.slice(3,6)],['Pharm Proctored',atiItems.slice(6,9)],['Comprehensive Predictor',atiItems.slice(9,11)]];
+const atiContainer=document.getElementById('ati');atiGroups.forEach((group,g)=>{const h=document.createElement('h3');h.style.fontSize='1rem';h.style.margin='12px 0 6px';h.textContent=group[0];atiContainer.appendChild(h);const div=document.createElement('div');div.className='grid';atiContainer.appendChild(div);group[1].forEach((item,j)=>{const idx=g*3+j;const [label,max]=item;const id='a'+idx;const f=document.createElement('div');f.className='field';f.innerHTML=`<label for="${id}">${label}<small>Max: ${max}</small></label><input id="${id}" type="number" min="0" max="${max}" step="0.01" inputmode="decimal" placeholder="—" aria-label="${label}, max ${max}">`;div.appendChild(f);});});
+function getVal(id,max){const el=document.getElementById(id);let v=el.value===''?0:Number(el.value);if(!Number.isFinite(v))v=0;v=Math.min(max,Math.max(0,v));return v;}
+function calc(){const exam=examItems.reduce((s,it,i)=>s+getVal('e'+i,it[1]),0);const fin=getVal('f0',75);const port=portfolioItems.reduce((s,it,i)=>s+getVal('p'+i,it[1]),0);const ati=atiItems.reduce((s,it,i)=>s+getVal('a'+i,it[1]),0);const ew=exam/375*65,fw=fin/75*20,pw=port/475*5,aw=ati/40*10,total=ew+fw+pw+aw;
+document.getElementById('examTotal').textContent=`${exam.toFixed(2)} / 375 · ${ew.toFixed(2)} weighted points`;document.getElementById('finalTotal').textContent=`${fin.toFixed(2)} / 75 · ${fw.toFixed(2)} weighted points`;document.getElementById('portfolioTotal').textContent=`${port.toFixed(2)} / 475 · ${pw.toFixed(2)} weighted points`;document.getElementById('atiTotal').textContent=`${ati.toFixed(2)} / 40 · ${aw.toFixed(2)} weighted points`;document.getElementById('overall').textContent=total.toFixed(2)+'%';document.getElementById('weighted').textContent=total.toFixed(2)+' / 100';const status=document.getElementById('status');const box=document.getElementById('statusBox');const overallBox=document.getElementById('overallBox');if(total>=75){status.textContent='At or above 75%';box.className='result pass';overallBox.className='result pass';}else{status.textContent=(75-total).toFixed(2)+' points to 75%';box.className='result near';overallBox.className='result';}}
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc));document.getElementById('reset').addEventListener('click',()=>{document.querySelectorAll('input').forEach(i=>i.value='');calc();});document.getElementById('print').addEventListener('click',()=>window.print());calc();
+</script>
+</body>
+</html>
